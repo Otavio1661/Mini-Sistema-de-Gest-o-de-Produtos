@@ -8,9 +8,7 @@ de dados (MySQL/PDO)** e **autenticação de usuários**.
 
 | Nome | RA |
 |------|----|
-| _preencher_ | _preencher_ |
-
-> Preencha a tabela acima com o nome e RA de cada integrante da equipe antes da entrega.
+| Otavio Silva | 60005860 |
 
 ## Funcionalidades
 
@@ -78,74 +76,21 @@ SistemaGestaoProdutos/
 
 ## Etapa 1 — Análise (telas)
 
-Wireframes de baixa fidelidade das principais telas do sistema. Os esboços originais também podem ser
-recriados no Figma; a estrutura abaixo documenta o mesmo layout implementado no código.
+Wireframes de baixa fidelidade das 6 telas principais do sistema, esboçados no Figma:
+**Login/Cadastro, Dashboard, Produtos/Fornecedores (CRUD), Loja (checkbox), Cesta e Área de Atualização (AJAX)**.
 
-### Login / Cadastro
-```
-┌─────────────────────────────┐
-│        Gestão de Produtos    │
-│  ┌─────────────────────────┐ │
-│  │ E-mail                  │ │
-│  │ Senha                   │ │
-│  │      [ Entrar ]         │ │
-│  │ Não tem conta? Cadastre-se│
-│  └─────────────────────────┘ │
-└─────────────────────────────┘
-```
+![Wireframes das telas do sistema](docs/wireframes/wireframes-overview.png)
 
-### Dashboard (com menu de navegação)
-```
-┌───────────────────────────────────────────────────────────┐
-│ Gestão de Produtos   Início  Produtos  Fornecedores        │
-│                      Atualização(AJAX) Loja  Cesta   Sair  │
-├───────────────────────────────────────────────────────────┤
-│  [ Produtos: N ]   [ Fornecedores: N ]   [ Cesta: N itens ]│
-│  [Cadastrar Produtos] [Cadastrar Fornecedores]              │
-│  [Ir à Loja]          [Ver Cesta]                            │
-└───────────────────────────────────────────────────────────┘
-```
+Arquivo original no Figma (editável): https://www.figma.com/design/CUWZ1281fV57gmZxkbvoSi
 
-### Produtos / Fornecedores (CRUD tradicional)
-```
-┌───────────────────┬───────────────────────────────────────┐
-│ Formulário         │ Tabela                                │
-│ Nome               │ Nome | Fornecedor | Preço | Estoque   │
-│ Descrição          │ ...                          [Editar] │
-│ Preço              │                              [Excluir]│
-│ Estoque            │                                       │
-│ Fornecedor (select)│                                       │
-│    [ Salvar ]      │                                       │
-└───────────────────┴───────────────────────────────────────┘
-```
+Cada tela reflete o layout realmente implementado no código:
 
-### Loja (seleção via checkbox)
-```
-┌───────────────┐  ┌───────────────┐  ┌───────────────┐
-│ [ ] Produto A │  │ [ ] Produto B │  │ [ ] Produto C │
-│ Fornecedor    │  │ Fornecedor    │  │ Fornecedor    │
-│ R$ 00,00      │  │ R$ 00,00      │  │ R$ 00,00      │
-└───────────────┘  └───────────────┘  └───────────────┘
-   [ Adicionar selecionados à Cesta ]  (exige >= 1 selecionado)
-```
-
-### Cesta (resumo)
-```
-┌───────────────────────────────────────────┐
-│ Produtos selecionados: N   Valor total: R$ │
-├───────────────────────────────────────────┤
-│ Produto | Preço | [Remover]                │
-└───────────────────────────────────────────┘
-```
-
-### Área de Atualização via AJAX
-```
-┌──────────────────────────────────────────────┐
-│ [Produtos] [Fornecedores] [Cesta]  <- abas    │
-│  Formulário + Tabela atualizados via fetch()  │
-│  sem recarregar a página                      │
-└──────────────────────────────────────────────┘
-```
+- **Login / Cadastro**: formulário de e-mail/senha e link para cadastro de novo usuário.
+- **Dashboard**: menu de navegação, cartões de resumo (produtos, fornecedores, itens na cesta) e atalhos.
+- **Produtos / Fornecedores**: formulário de cadastro à esquerda e tabela com Editar/Excluir à direita (CRUD tradicional).
+- **Loja**: grade de produtos com checkbox de seleção e botão para adicionar à cesta (validação de ao menos 1 selecionado).
+- **Cesta**: cartões de resumo (quantidade e valor total) e tabela dos itens selecionados.
+- **Área de Atualização (AJAX)**: abas de Produtos/Fornecedores/Cesta com formulário e tabela atualizados via fetch(), sem recarregar a página.
 
 ## Etapa 2 — Modelagem (DER)
 
