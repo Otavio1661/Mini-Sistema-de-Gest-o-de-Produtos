@@ -12,7 +12,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $acao = $_POST['acao'] ?? 'salvar';
 
     if ($acao === 'excluir') {
-        Fornecedor::excluir((int) $_POST['id']);
+        $idExcluir = (int) $_POST['id'];
+
+        if (Fornecedor::possuiProdutos($idExcluir)) {
+            header('Location: fornecedores.php?erro=' . urlencode('Não é possível excluir: existem produtos cadastrados para este fornecedor.'));
+            exit;
+        }
+
+        Fornecedor::excluir($idExcluir);
         header('Location: fornecedores.php?sucesso=' . urlencode('Fornecedor excluído com sucesso.'));
         exit;
     }
@@ -26,6 +33,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if ($nome === '' || $cnpj === '') {
         $erro = 'Nome e CNPJ são obrigatórios.';
+    } elseif (!Fornecedor::cnpjValido($cnpj)) {
+        $erro = 'CNPJ inválido. Informe os 14 dígitos do CNPJ.';
     } else {
         $fornecedor = new Fornecedor($nome, $cnpj, $telefone, $email, $endereco, $id);
         $fornecedor->salvar();
@@ -38,6 +47,7 @@ if (isset($_GET['editar'])) {
     $editando = Fornecedor::buscarPorId((int) $_GET['editar']);
 }
 
+$erro = $erro ?? ($_GET['erro'] ?? null);
 $sucesso = $_GET['sucesso'] ?? null;
 $fornecedores = Fornecedor::listarTodos();
 
@@ -70,12 +80,14 @@ require __DIR__ . '/includes/navbar.php';
                         </div>
                         <div class="mb-2">
                             <label class="form-label">CNPJ</label>
-                            <input type="text" class="form-control" name="cnpj" required
+                            <input type="text" class="form-control" name="cnpj" maxlength="18"
+                                   placeholder="00.000.000/0000-00" required
                                    value="<?= htmlspecialchars($editando->cnpj ?? '') ?>">
                         </div>
                         <div class="mb-2">
                             <label class="form-label">Telefone</label>
-                            <input type="text" class="form-control" name="telefone"
+                            <input type="text" class="form-control" name="telefone" maxlength="15"
+                                   placeholder="(00) 00000-0000"
                                    value="<?= htmlspecialchars($editando->telefone ?? '') ?>">
                         </div>
                         <div class="mb-2">
@@ -135,4 +147,5 @@ require __DIR__ . '/includes/navbar.php';
         </div>
     </div>
 </div>
+<script src="assets/js/mascaras.js"></script>
 <?php require __DIR__ . '/includes/footer.php'; ?>

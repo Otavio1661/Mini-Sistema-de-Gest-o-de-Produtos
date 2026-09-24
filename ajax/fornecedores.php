@@ -48,6 +48,12 @@ try {
             exit;
         }
 
+        if (!Fornecedor::cnpjValido($cnpj)) {
+            http_response_code(422);
+            echo json_encode(['erro' => 'CNPJ inválido. Informe os 14 dígitos do CNPJ.']);
+            exit;
+        }
+
         $fornecedor = new Fornecedor($nome, $cnpj, $telefone, $email, $endereco, $id);
         $fornecedor->salvar();
 
@@ -56,7 +62,15 @@ try {
     }
 
     if ($acao === 'excluir') {
-        Fornecedor::excluir((int) ($entrada['id'] ?? 0));
+        $idExcluir = (int) ($entrada['id'] ?? 0);
+
+        if (Fornecedor::possuiProdutos($idExcluir)) {
+            http_response_code(409);
+            echo json_encode(['erro' => 'Não é possível excluir: existem produtos cadastrados para este fornecedor.']);
+            exit;
+        }
+
+        Fornecedor::excluir($idExcluir);
         echo json_encode(['sucesso' => true, 'mensagem' => 'Fornecedor excluído com sucesso.']);
         exit;
     }

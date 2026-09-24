@@ -28,6 +28,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if ($nome === '' || $fornecedorId <= 0) {
         $erro = 'Nome e fornecedor são obrigatórios.';
+    } elseif ($preco < 0 || $quantidade < 0) {
+        $erro = 'Preço e estoque não podem ser negativos.';
     } elseif (!$fornecedores) {
         $erro = 'Cadastre um fornecedor antes de cadastrar produtos.';
     } else {

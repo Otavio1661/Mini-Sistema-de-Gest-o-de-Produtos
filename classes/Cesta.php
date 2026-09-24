@@ -49,16 +49,23 @@ class Cesta
             'INSERT IGNORE INTO cesta_itens (cesta_id, produto_id) VALUES (:cesta_id, :produto_id)'
         );
 
-        $adicionados = 0;
-        foreach ($produtoIds as $produtoId) {
-            $stmt->execute([
-                ':cesta_id' => $this->id,
-                ':produto_id' => (int) $produtoId,
-            ]);
-            $adicionados += $stmt->rowCount();
-        }
+        $pdo->beginTransaction();
+        try {
+            $adicionados = 0;
+            foreach ($produtoIds as $produtoId) {
+                $stmt->execute([
+                    ':cesta_id' => $this->id,
+                    ':produto_id' => (int) $produtoId,
+                ]);
+                $adicionados += $stmt->rowCount();
+            }
+            $pdo->commit();
 
-        return $adicionados;
+            return $adicionados;
+        } catch (Throwable $e) {
+            $pdo->rollBack();
+            throw $e;
+        }
     }
 
     public function removerProduto(int $produtoId): bool

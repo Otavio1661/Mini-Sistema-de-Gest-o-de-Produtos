@@ -1,4 +1,15 @@
 const formLoja = document.getElementById('formLoja');
+const btnAdicionarCesta = document.getElementById('btnAdicionarCesta');
+
+function atualizarBotaoCesta() {
+    if (!btnAdicionarCesta) return;
+    const marcados = document.querySelectorAll('.produto-checkbox:checked').length;
+    btnAdicionarCesta.disabled = marcados === 0;
+}
+
+document.querySelectorAll('.produto-checkbox').forEach((checkbox) => {
+    checkbox.addEventListener('change', atualizarBotaoCesta);
+});
 
 if (formLoja) {
     formLoja.addEventListener('submit', async (evento) => {

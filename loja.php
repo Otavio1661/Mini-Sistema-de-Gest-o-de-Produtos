@@ -44,7 +44,7 @@ require __DIR__ . '/includes/navbar.php';
         </div>
 
         <?php if ($produtos): ?>
-            <button type="submit" class="btn btn-primary mt-4">Adicionar selecionados à Cesta</button>
+            <button type="submit" id="btnAdicionarCesta" class="btn btn-primary mt-4" disabled>Adicionar selecionados à Cesta</button>
         <?php endif; ?>
     </form>
 </div>

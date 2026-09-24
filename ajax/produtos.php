@@ -39,6 +39,12 @@ try {
             exit;
         }
 
+        if ($preco < 0 || $quantidade < 0) {
+            http_response_code(422);
+            echo json_encode(['erro' => 'Preço e estoque não podem ser negativos.']);
+            exit;
+        }
+
         $produto = new Produto($nome, $descricao, $preco, $quantidade, $fornecedorId, $id);
         $produto->salvar();
 

@@ -47,6 +47,7 @@ class Auth
             return [false, 'E-mail ou senha inválidos.'];
         }
 
+        session_regenerate_id(true);
         $_SESSION['usuario_id'] = $usuario->id;
         $_SESSION['usuario_nome'] = $usuario->nome;
 

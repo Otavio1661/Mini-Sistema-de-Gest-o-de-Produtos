@@ -10,6 +10,25 @@ function formatarPreco(valor) {
     return 'R$ ' + Number(valor).toFixed(2).replace('.', ',');
 }
 
+function criarBotao(texto, classe, aoClicar) {
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = classe;
+    btn.textContent = texto;
+    btn.addEventListener('click', aoClicar);
+    return btn;
+}
+
+function criarCelulaAcoes(...botoes) {
+    const td = document.createElement('td');
+    td.className = 'text-end';
+    botoes.forEach((btn, i) => {
+        if (i > 0) td.appendChild(document.createTextNode(' '));
+        td.appendChild(btn);
+    });
+    return td;
+}
+
 /* ---------------- PRODUTOS ---------------- */
 
 async function carregarProdutos() {
@@ -20,26 +39,33 @@ async function carregarProdutos() {
 
     (json.dados || []).forEach((p) => {
         const tr = document.createElement('tr');
-        tr.innerHTML = `
-            <td>${p.nome}</td>
-            <td>${p.fornecedor_nome}</td>
-            <td>${formatarPreco(p.preco)}</td>
-            <td>${p.quantidade_estoque}</td>
-            <td class="text-end">
-                <button class="btn btn-sm btn-outline-primary" onclick="editarProduto(${p.id}, '${p.nome.replace(/'/g, "\\'")}', '${(p.descricao || '').replace(/'/g, "\\'")}', ${p.preco}, ${p.quantidade_estoque}, ${p.fornecedor_id})">Editar</button>
-                <button class="btn btn-sm btn-outline-danger" onclick="excluirProduto(${p.id})">Excluir</button>
-            </td>`;
+
+        const tdNome = document.createElement('td');
+        tdNome.textContent = p.nome;
+        const tdFornecedor = document.createElement('td');
+        tdFornecedor.textContent = p.fornecedor_nome;
+        const tdPreco = document.createElement('td');
+        tdPreco.textContent = formatarPreco(p.preco);
+        const tdEstoque = document.createElement('td');
+        tdEstoque.textContent = p.quantidade_estoque;
+
+        tr.append(tdNome, tdFornecedor, tdPreco, tdEstoque);
+        tr.appendChild(criarCelulaAcoes(
+            criarBotao('Editar', 'btn btn-sm btn-outline-primary', () => editarProduto(p)),
+            criarBotao('Excluir', 'btn btn-sm btn-outline-danger', () => excluirProduto(p.id)),
+        ));
+
         tbody.appendChild(tr);
     });
 }
 
-function editarProduto(id, nome, descricao, preco, estoque, fornecedorId) {
-    document.getElementById('produtoId').value = id;
-    document.getElementById('produtoNome').value = nome;
-    document.getElementById('produtoDescricao').value = descricao;
-    document.getElementById('produtoPreco').value = preco;
-    document.getElementById('produtoEstoque').value = estoque;
-    document.getElementById('produtoFornecedor').value = fornecedorId;
+function editarProduto(p) {
+    document.getElementById('produtoId').value = p.id;
+    document.getElementById('produtoNome').value = p.nome;
+    document.getElementById('produtoDescricao').value = p.descricao || '';
+    document.getElementById('produtoPreco').value = p.preco;
+    document.getElementById('produtoEstoque').value = p.quantidade_estoque;
+    document.getElementById('produtoFornecedor').value = p.fornecedor_id;
 }
 
 async function excluirProduto(id) {
@@ -59,13 +85,21 @@ async function excluirProduto(id) {
 document.getElementById('formProduto').addEventListener('submit', async (evento) => {
     evento.preventDefault();
 
+    const preco = parseFloat(document.getElementById('produtoPreco').value);
+    const estoque = parseInt(document.getElementById('produtoEstoque').value, 10);
+
+    if (preco < 0 || estoque < 0) {
+        mostrarAlerta('Preço e estoque não podem ser negativos.', 'danger');
+        return;
+    }
+
     const dados = {
         acao: 'salvar',
         id: document.getElementById('produtoId').value || null,
         nome: document.getElementById('produtoNome').value,
         descricao: document.getElementById('produtoDescricao').value,
-        preco: document.getElementById('produtoPreco').value,
-        quantidade_estoque: document.getElementById('produtoEstoque').value,
+        preco,
+        quantidade_estoque: estoque,
         fornecedor_id: document.getElementById('produtoFornecedor').value,
     };
 
@@ -100,14 +134,20 @@ async function carregarFornecedores() {
 
     (json.dados || []).forEach((f) => {
         const tr = document.createElement('tr');
-        tr.innerHTML = `
-            <td>${f.nome}</td>
-            <td>${f.cnpj}</td>
-            <td>${f.telefone || '-'}</td>
-            <td class="text-end">
-                <button class="btn btn-sm btn-outline-primary" onclick='editarFornecedor(${JSON.stringify(f)})'>Editar</button>
-                <button class="btn btn-sm btn-outline-danger" onclick="excluirFornecedor(${f.id})">Excluir</button>
-            </td>`;
+
+        const tdNome = document.createElement('td');
+        tdNome.textContent = f.nome;
+        const tdCnpj = document.createElement('td');
+        tdCnpj.textContent = f.cnpj;
+        const tdTelefone = document.createElement('td');
+        tdTelefone.textContent = f.telefone || '-';
+
+        tr.append(tdNome, tdCnpj, tdTelefone);
+        tr.appendChild(criarCelulaAcoes(
+            criarBotao('Editar', 'btn btn-sm btn-outline-primary', () => editarFornecedor(f)),
+            criarBotao('Excluir', 'btn btn-sm btn-outline-danger', () => excluirFornecedor(f.id)),
+        ));
+
         tbody.appendChild(tr);
     });
 }
@@ -180,12 +220,17 @@ async function carregarCestaAjax() {
 
     (json.dados || []).forEach((item) => {
         const tr = document.createElement('tr');
-        tr.innerHTML = `
-            <td>${item.nome}</td>
-            <td>${formatarPreco(item.preco)}</td>
-            <td class="text-end">
-                <button class="btn btn-sm btn-outline-danger" onclick="removerDaCestaAjax(${item.id})">Remover</button>
-            </td>`;
+
+        const tdNome = document.createElement('td');
+        tdNome.textContent = item.nome;
+        const tdPreco = document.createElement('td');
+        tdPreco.textContent = formatarPreco(item.preco);
+
+        tr.append(tdNome, tdPreco);
+        tr.appendChild(criarCelulaAcoes(
+            criarBotao('Remover', 'btn btn-sm btn-outline-danger', () => removerDaCestaAjax(item.id)),
+        ));
+
         tbody.appendChild(tr);
     });
 

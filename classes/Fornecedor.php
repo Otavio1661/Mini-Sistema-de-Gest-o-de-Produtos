@@ -100,4 +100,29 @@ class Fornecedor
 
         return array_map(fn (array $row) => self::fromArray($row), $stmt->fetchAll());
     }
+
+    /**
+     * Valida o formato do CNPJ (14 dígitos, não permite sequências repetidas
+     * como "00000000000000"). Não valida os dígitos verificadores para não
+     * bloquear CNPJs de teste durante a demonstração/correção do trabalho.
+     */
+    public static function cnpjValido(string $cnpj): bool
+    {
+        $digitos = preg_replace('/\D/', '', $cnpj);
+
+        return strlen($digitos) === 14 && !preg_match('/^(\d)\1{13}$/', $digitos);
+    }
+
+    /**
+     * Impede excluir um fornecedor que ainda possui produtos vinculados
+     * (fk_produto_fornecedor é ON DELETE RESTRICT).
+     */
+    public static function possuiProdutos(int $id): bool
+    {
+        $pdo = Database::getConnection();
+        $stmt = $pdo->prepare('SELECT 1 FROM produtos WHERE fornecedor_id = :id LIMIT 1');
+        $stmt->execute([':id' => $id]);
+
+        return (bool) $stmt->fetch();
+    }
 }

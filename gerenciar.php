@@ -95,11 +95,13 @@ require __DIR__ . '/includes/navbar.php';
                                 </div>
                                 <div class="mb-2">
                                     <label class="form-label">CNPJ</label>
-                                    <input type="text" class="form-control" id="fornecedorCnpj" required>
+                                    <input type="text" class="form-control" id="fornecedorCnpj" maxlength="18"
+                                           placeholder="00.000.000/0000-00" required>
                                 </div>
                                 <div class="mb-2">
                                     <label class="form-label">Telefone</label>
-                                    <input type="text" class="form-control" id="fornecedorTelefone">
+                                    <input type="text" class="form-control" id="fornecedorTelefone" maxlength="15"
+                                           placeholder="(00) 00000-0000">
                                 </div>
                                 <div class="mb-2">
                                     <label class="form-label">E-mail</label>
@@ -145,5 +147,6 @@ require __DIR__ . '/includes/navbar.php';
         </div>
     </div>
 </div>
+<script src="assets/js/mascaras.js"></script>
 <script src="assets/js/gerenciar.js"></script>
 <?php require __DIR__ . '/includes/footer.php'; ?>
