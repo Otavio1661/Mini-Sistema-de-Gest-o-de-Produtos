@@ -94,7 +94,23 @@ Cada tela reflete o layout realmente implementado no código:
 
 ## Etapa 2 — Modelagem (DER)
 
-Diagrama Entidade-Relacionamento (renderizado automaticamente pelo GitHub via Mermaid):
+Diagrama Entidade-Relacionamento (DER) do banco `gestao_produtos`, com todos os campos, chaves primárias (PK),
+estrangeiras (FK) e únicas (UK), e a cardinalidade de cada relacionamento:
+
+![DER do banco de dados](docs/der/der.png)
+
+Arquivo original (editável no FigJam): https://www.figma.com/board/od2PrjqvyKEZX1HazuU0WR
+
+Relacionamentos:
+
+- **1:N** — um Fornecedor fornece vários Produtos (`fornecedores.id → produtos.fornecedor_id`).
+- **1:N** — um Usuário possui várias Cestas (`usuarios.id → cestas.usuario_id`; na prática o sistema sempre
+  reaproveita a cesta com `status = 'aberta'` do usuário).
+- **N:N** — Cestas e Produtos se relacionam via a tabela associativa `cesta_itens` (chave única
+  `cesta_id + produto_id` evita produto duplicado na mesma cesta).
+
+Versão também em Mermaid (renderiza direto no GitHub), equivalente ao script de criação em
+[`sql/schema.sql`](sql/schema.sql) — executado automaticamente pela aplicação, não precisa ser rodado manualmente:
 
 ```mermaid
 erDiagram
@@ -145,9 +161,6 @@ erDiagram
     CESTAS ||--o{ CESTA_ITENS : "contém"
     PRODUTOS ||--o{ CESTA_ITENS : "está em"
 ```
-
-O script de criação equivalente está em [`sql/schema.sql`](sql/schema.sql) (executado automaticamente pela
-aplicação; não precisa ser rodado manualmente).
 
 ## Etapa 3 — Implementação
 
