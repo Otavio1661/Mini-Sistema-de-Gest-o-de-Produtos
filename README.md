@@ -177,10 +177,8 @@ erDiagram
 Este projeto segue o padrão de mensagens descrito em
 [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/), por exemplo:
 
-```
-feat: adiciona cadastro de fornecedores
-fix: corrige cálculo do total da cesta
-docs: atualiza instruções de instalação no README
-```
 
-Lembre-se de que **todos os integrantes da equipe devem possuir commits** no histórico do repositório.
+
+
+
+### USO DE VIBE CODE.
